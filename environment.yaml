@@ -1,0 +1,17 @@
+name: GEDIAG
+channels:
+- conda-forge
+- defaults
+dependencies:
+- python
+- matplotlib
+- numpy
+- openpyxl
+- pandas
+- pip
+- spyder-kernels=3.0
+- tqdm
+- geopandas
+- pip:
+  - fiona
+  - openpyxl
