@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 13 15:20:25 2025
+Code to analyze the survey for
+---- GENERATIONAL DIALOGUE IN GEOTECHNICS ----
 
-@author: GEr
+Script executes the analyses and creates plots for publications
+
+Code author: Georg Erharter
+georg.erharter@ngi.no
 """
 
 import os
@@ -13,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 from dictionaries import dicts
-from library import plotter, preprocessor, utilities
+from library import Plotter, Preprocessor, Utilities
 
 
 #############################
@@ -39,9 +43,9 @@ folders = [#r'C:\Users\GEr\Dropbox\Apps\Overleaf\GEDIAG_FactualReport\figures',
 print(folders)
 
 d = dicts()
-pltr = plotter(GENERATIONS[1:], folders)
-utils = utilities()
-prep = preprocessor()
+pltr = Plotter(GENERATIONS[1:], folders)
+utils = Utilities()
+prep = Preprocessor()
 
 file_path = os.path.abspath(os.path.join(script_dir, '..', '..', f'{FN}.xlsx'))
 df = pd.read_excel(file_path, keep_default_na=False)
@@ -272,7 +276,8 @@ with PdfPages(pdf_path) as pdf:
 
     # make stacked barcharts for single choice questions
     print('single choice barcharts')
-    for q_nr in [9, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 30, 35, 36, 37, 39, 40, 42, 43, 44, 46]:
+    for q_nr in [9, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 30, 35, 36, 37,
+                 39, 40, 42, 43, 44, 46]:
         pltr.generation_perc_bar_generic(df, d.question_numbers[q_nr],
                                          d.answers[q_nr],
                                          filename=f'{MOD}_{q_nr}_perc_bar')

@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Apr 13 13:02:53 2025
+Code to analyze the survey for
+---- GENERATIONAL DIALOGUE IN GEOTECHNICS ----
 
-@author: GEr
+Script contains a custom library with functions that are required to analyze
+and visualize the survey results.
+
+Code author: Georg Erharter
+georg.erharter@ngi.no
 """
 
 import geopandas as gpd
@@ -12,7 +17,8 @@ import numpy as np
 import pandas as pd
 
 
-class preprocessor:
+class Preprocessor:
+    '''class with functions to preprocess the survey responses'''
 
     def __init__(self):
         pass
@@ -26,12 +32,14 @@ class preprocessor:
         return df
 
 
-class utilities:
+class Utilities:
+    '''class with miscaleneous functions'''
 
     def __init__(self):
         pass
 
     def relative_numbers(self, df, column):
+        '''function prints the relative answers for one specific question'''
         vals, counts = np.unique(df[column].astype(str), return_counts=True)
         counts = list(np.round(counts/counts.sum()*100, 0))
         dic = {'values': vals, 'perc': counts}
@@ -39,7 +47,8 @@ class utilities:
         print(column, dic, '\n')
 
 
-class plotter:
+class Plotter:
+    '''class with plotting functions for survey analyses'''
 
     def __init__(self, GENERATIONS: list, FOLDERS: list):
         self.GENERATIONS = GENERATIONS
@@ -52,7 +61,7 @@ class plotter:
                          ] * 4
 
     def wrap_text(self, text: str, max_length: int = 60) -> str:
-        '''function that wraps text for long questions'''
+        '''function that wraps text to a maximum number of characters'''
         words = text.split()
         lines = []
         current_line = ""
@@ -71,6 +80,7 @@ class plotter:
         return '\n'.join(lines)
 
     def plot_end(self, filename: str) -> None:
+        '''internal conveniance function that is put at the end of most plots'''
         plt.tight_layout()
         for folder in self.FOLDERS:
             plt.savefig(fr'{folder}\{filename}.pdf')
@@ -78,6 +88,7 @@ class plotter:
 
     def submissions_age_histogram(self, df: pd.DataFrame,
                                   df_generations: pd.DataFrame, filename: str):
+        '''histogram that shows numbers of submissions over birth years'''
         fig, ax = plt.subplots(figsize=(5, 4))
 
         h = ax.hist(df['birth year'],
@@ -104,6 +115,7 @@ class plotter:
 
     def submissions_barchart(self, df_generations: pd.DataFrame,
                              filename: str):
+        '''barchart that shows how many submissions per generation were received'''
         fig, ax = plt.subplots(figsize=(5, 4))
 
         bottom = np.zeros(len(df_generations))
@@ -172,11 +184,13 @@ class plotter:
         self.plot_end(filename)
 
     def participation_world_map(self, df: pd.DataFrame, filename: str) -> None:
+        '''plots a world map that shows the participation numbers globally'''
         # Load world map
         # url = "https://naciscdn.org/naturalearth/110m/cultural/ne_110m_admin_0_countries.zip"
         # world = gpd.read_file(url)
 
-        world = gpd.read_file(r'world-administrative-boundaries\world-administrative-boundaries.shp')
+        world = gpd.read_file(
+            r'world-administrative-boundaries\world-administrative-boundaries.shp')
 
         world.to_excel('world.xlsx')
 
@@ -216,6 +230,7 @@ class plotter:
 
     def generation_perc_bar_generic(self, df: pd.DataFrame, question: str,
                                     answers: list, filename: str) -> None:
+        '''stacked barchart for single choice questions'''
 
         df.dropna(subset=question, inplace=True)
 
@@ -432,6 +447,7 @@ class plotter:
 
     def generation_rating_plot(self, df: pd.DataFrame, columns: list, answers: list,
                                question: str, filename: str):
+        '''plot visualizes answers to rating questions over generations'''
         fig = plt.figure(figsize=(10, len(columns)/1.5))
 
         for i, g in enumerate(self.GENERATIONS):
@@ -477,4 +493,3 @@ class plotter:
         fig.suptitle(self.wrap_text(question, max_length=70))
 
         self.plot_end(filename)
-
