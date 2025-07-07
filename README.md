@@ -22,6 +22,7 @@ To do this create an environment called `GEDIAG` using `environment.yaml` with t
 ```bash
 
 conda env create --file environment.yaml
+conda activate gediag
 
 ```
 
