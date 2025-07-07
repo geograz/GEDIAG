@@ -26,7 +26,7 @@ conda activate gediag
 
 ```
 
-Note: You may need to install the Anaconda or Miniconda distribution beforehand to use conda commands.
+Note: You may need to install the [Anaconda or Miniconda](https://www.anaconda.com/download/success) distribution beforehand to use conda commands.
 
 
 
