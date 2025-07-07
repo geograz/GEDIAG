@@ -17,7 +17,7 @@ Survey Organizers: Alexander Kluckner, Georg Erharter, Andreas-Nizar Granitzer, 
 
 The environment is set up using `conda`.
 
-To do this create an environment called `GEDIAG` using `environment.yaml` with the help of `conda`.
+To create the environment called `gediag` from the `environment.yaml` file, run:
 
 ```bash
 
@@ -25,6 +25,8 @@ conda env create --file environment.yaml
 conda activate gediag
 
 ```
+
+Note: You may need to install the Anaconda or Miniconda distribution beforehand to use conda commands.
 
 
 
