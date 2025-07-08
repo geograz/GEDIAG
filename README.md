@@ -2,7 +2,7 @@
 
 Repository for the code and analyses of the study on "Generational Dialogue in Geotechnics"
 
-XXXX INSERT BRIEF SURVEY DESCRIPTION
+An international online survey was conducted from March to July 2025 to explore generational differences in experiences, beliefs, needs, and goals of members of the geo-community. The survey targeted professionals independent of age and experience who study or work in geotechnics or other geo-related disciplines. The results aim to serve as a foundation for increasing the profession’s attractiveness, offer valuable insights into intergenerational biases, and lay the groundwork for improved collaboration in the workplace.
 
 Survey Organizers: Alexander Kluckner, Georg Erharter, Andreas-Nizar Granitzer, Bettina Mair, Suzanne Lacasse
 
