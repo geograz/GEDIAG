@@ -25,7 +25,7 @@ from library import Plotter, Preprocessor, Utilities
 #############################
 
 FN = r'Generational dialogue in geotechnics(1-822)'
-GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z']
+GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z'] # "Silent" not used in the survey, but included for completeness
 MOD = 'ALL'  # modifier for filenames  # DACH, ALL
 
 
@@ -42,12 +42,14 @@ folders = [#r'C:\Users\GEr\Dropbox\Apps\Overleaf\GEDIAG_FactualReport\figures',
 
 print(folders)
 
+# load dictionary, utilities and plotter class
 d = dicts()
 pltr = Plotter(GENERATIONS[1:], folders)
 utils = Utilities()
 prep = Preprocessor()
 
-file_path = os.path.abspath(os.path.join(script_dir, '..', '..', f'{FN}.xlsx'))
+# read data from excel file
+file_path = os.path.abspath(os.path.join(script_dir, '..', 'data', f'{FN}.xlsx'))
 df = pd.read_excel(file_path, keep_default_na=False)
 
 # rename columns where necessary

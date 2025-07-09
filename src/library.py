@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 
 
+# TODO: Might be more convenient to turn this into a @staticmethod as no state is shared
 class Preprocessor:
     '''class with functions to preprocess the survey responses'''
 
@@ -31,9 +32,9 @@ class Preprocessor:
         df.loc[mask, column] = replace_with
         return df
 
-
+# TODO: Might be more convenient to turn this into a @staticmethod as no state is shared
 class Utilities:
-    '''class with miscaleneous functions'''
+    '''class with miscellaneous functions'''
 
     def __init__(self):
         pass
@@ -391,8 +392,7 @@ class Plotter:
 
     def generation_violin_generic(self, df: pd.DataFrame, question: str,
                                   filename: str) -> None:
-        '''plots violins that show the distribution of answers to numerical
-        questions as violins'''
+        '''plots the distribution of answers to numerical questions as violins'''
 
         df.dropna(subset=question, inplace=True)
 
