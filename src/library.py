@@ -192,9 +192,9 @@ class Plotter:
         # world = gpd.read_file(url)
 
         world = gpd.read_file(
-            r'world-administrative-boundaries\world-administrative-boundaries.shp')
+            r'data\world-administrative-boundaries\world-administrative-boundaries.shp')
 
-        world.to_excel('world.xlsx')
+        world.to_excel(r'.\data\world.xlsx')
 
         labels, counts = np.unique(df['country'], return_counts=True)
 

@@ -56,6 +56,7 @@ df = pd.read_excel(file_path, keep_default_na=False)
 df.rename(d.questions, axis=1, inplace=True)
 
 # replace answers that are unusable in raw form with values from dictionary
+# required for merge with shape file in function participation_world_map
 df['country'] = df['country'].replace(d.countries)
 # TODO: might be reaosonable to transparently address the mapping of professions and primary work fields
 df['profession'] = df['profession'].replace(d.professions)
@@ -204,6 +205,7 @@ with PdfPages(pdf_path) as pdf:
     pltr.bar_chart_generic(df, column='profession', x_sort='ascending',
                            filename=f'{MOD}_bar_professions')
     fig = plt.gcf()
+    # TODO: add doc of the .attach_note method
     pdf.attach_note('question number 4')
     pdf.savefig(fig)  # Saves the current figure into the PDF
     plt.close(fig)    # Close the figure to free memory
