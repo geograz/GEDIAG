@@ -128,11 +128,13 @@ for g in df_generations.index:
 df_generations['n submissions'] = df.groupby('generation').size()
 df_genders = df.groupby(['generation', 'gender']).size().unstack()
 df_genders.columns = [f'n {g}' for g in df_genders.columns]
+
+count_cols = [col for col in df_genders.columns if col.startswith('n ')] # true gender counts are used as the denominator
 for gender in ['Male', 'Female', 'Non-binary']:
-    try:
-        df_genders[f'% {gender}'] = df_genders[f'n {gender}'] / df_genders.sum(axis=1)
-    except KeyError:
-        pass
+    col = f'n {gender}'
+    if col in df_genders.columns:
+        df_genders[f'% {gender}'] = df_genders[col] / df_genders[count_cols].sum(axis=1)
+
 df_generations = pd.concat((df_generations, df_genders), axis=1)
 df_generations.fillna(0, inplace=True)
 
