@@ -24,7 +24,7 @@ from library import Plotter, Preprocessor, Utilities
 # fixed variables and constants
 #############################
 
-FN = r'Generational dialogue in geotechnics(1-822)'
+FN = r'Generational dialogue in geotechnics(1-822)' # File name of the survey results
 GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z'] # "Silent" not used in the survey, but included for completeness
 MOD = 'ALL'  # modifier for filenames  # DACH, ALL
 
@@ -57,25 +57,32 @@ df.rename(d.questions, axis=1, inplace=True)
 
 # replace answers that are unusable in raw form with values from dictionary
 df['country'] = df['country'].replace(d.countries)
+# TODO: might be reaosonable to transparently address the mapping of professions and primary work fields
 df['profession'] = df['profession'].replace(d.professions)
 df['primary field of work'] = df['primary field of work'].replace(d.primary_work_field)
 
-# replace answers that are unusable in raw form with single other values
+# replace answers that are unusable in raw form with "other"
 for q_nr in [8, 19, 20, 21, 22, 23, 25, 30]:
     df = prep.replace_all_but(df, column=d.question_numbers[q_nr],
                               exceptions=d.answers[q_nr])
+
+# DEBUG: print unique values of resepctive columns after processing
+for q_nr in [8, 19, 20, 21, 22, 23, 25, 30]:
+    print(f"Unique values in {q_nr}: {df[d.question_numbers[q_nr]].unique()}")
 
 # process multiple choice answers
 for q_nr in [14, 24, 27, 32, 34]:
     # make new columns in dataframe for up to 3 answers
     for choice in [1, 2, 3]:
         df[f'{q_nr}_choice_{choice}'] = ''
+    
     # iterate through rows to assign answer possibilities to columns
     for i, row in df.iterrows():
         try:
             row = row[d.question_numbers[q_nr]].split(';')[:-1]
             row = [a if a in d.answers[q_nr] else 'other' for a in row]
-            for j, c in enumerate(row):
+            # Limit to 3 choices (avoid > 3 colums in case other include semi-colon seperated entries)
+            for j, c in enumerate(row[:3]):
                 df.loc[i, f'{q_nr}_choice_{j+1}'] = c
         except AttributeError:
             pass
@@ -90,7 +97,7 @@ for q_nr in [31, 33]:
     ids = ids1 + ids2
     df.loc[ids, d.question_numbers[q_nr+1]] = np.nan
 
-
+# switch to include only DACH countries if requested
 if MOD == 'DACH':
     df = df[(df['country'] == 'Austria') |
             (df['country'] == 'Germany') |
@@ -301,3 +308,5 @@ with PdfPages(pdf_path) as pdf:
         pdf.attach_note(f'question number {q_nr}')
         pdf.savefig(fig)  # Saves the current figure into the PDF
         plt.close(fig)    # Close the figure to free memory
+
+# %%
