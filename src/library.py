@@ -162,7 +162,7 @@ class Plotter:
             sorting = np.flip(np.argsort(counts))
         elif x_sort == 'ascending':
             sorting = np.argsort(counts)
-        else:  # custom sorting
+        else:  # custom sorting allows to filter e.g. "other" answers
             arr_index_map = {value: idx for idx, value in enumerate(labels)}
             sorting = np.array([arr_index_map[value] for value in x_sort])
 
