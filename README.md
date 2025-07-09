@@ -15,7 +15,7 @@ Survey Organizers: Alexander Kluckner, Georg Erharter, Andreas-Nizar Granitzer, 
     - Figures prefixed with `ALL_` display results for all survey responses.
     - Figures prefixed with `DACH_` display results specifically for responses from Austria :austria:, Germany :de:, and Switzerland :switzerland:.
 - **src/**: Contains all source code used for data analysis and figure generation.
-- **data/**: (Not included in the repository) Place the required dataset here to run analyses.
+- **data/**: (Not included in the repository) Place the required data here to run analyses.
 - **environment.yaml**: Lists all dependencies needed to reproduce the analysis environment.
 
 This structure ensures clear separation between code, results, and data, making it easy to navigate and reproduce the study.

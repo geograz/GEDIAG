@@ -67,10 +67,6 @@ for q_nr in [8, 19, 20, 21, 22, 23, 25, 30]:
     df = prep.replace_all_but(df, column=d.question_numbers[q_nr],
                               exceptions=d.answers[q_nr])
 
-# DEBUG: print unique values of resepctive columns after processing
-for q_nr in [8, 19, 20, 21, 22, 23, 25, 30]:
-    print(f"Unique values in {q_nr}: {df[d.question_numbers[q_nr]].unique()}")
-
 # process multiple choice answers
 for q_nr in [14, 24, 27, 32, 34]:
     # make new columns in dataframe for up to 3 answers
@@ -142,7 +138,9 @@ df_generations.fillna(0, inplace=True)
 #############################
 # print selected stats
 #############################
-
+print()
+print("============== Summary stastistics ==============")
+print()
 print('n participants', len(df))
 print('n participants AT:', len(df[df['country'] == 'Austria']))
 print('n participants DE:', len(df[df['country'] == 'Germany']))
@@ -181,6 +179,10 @@ utils.relative_numbers(df, d.question_numbers[42])
 #############################
 # plotting
 #############################
+
+print()
+print("============== Plot generation ==============")
+print()
 
 pdf_path = os.path.abspath(os.path.join(script_dir, '..', '..',
                                         f'{MOD}_combined_plots.pdf'))
@@ -311,4 +313,3 @@ with PdfPages(pdf_path) as pdf:
         pdf.savefig(fig)  # Saves the current figure into the PDF
         plt.close(fig)    # Close the figure to free memory
 
-# %%
