@@ -136,17 +136,15 @@ for gender in ['Male', 'Female', 'Non-binary']:
 df_generations = pd.concat((df_generations, df_genders), axis=1)
 df_generations.fillna(0, inplace=True)
 
-# df.to_excel(f'{MOD}_{FN}_modified.xlsx')
-
 #############################
-# print stats
+# print selected stats
 #############################
 
 print('n participants', len(df))
 print('n participants AT:', len(df[df['country'] == 'Austria']))
 print('n participants DE:', len(df[df['country'] == 'Germany']))
 print('n participants CH:', len(df[df['country'] == 'Switzerland']))
-print('ages:', df['birth year'].min(), df['birth year'].max())
+print('age range:', df['birth year'].min(), df['birth year'].max())
 print('genders:', np.unique(df['gender'], return_counts=True), '\n')
 
 utils.relative_numbers(df, 'profession')

@@ -26,8 +26,8 @@ class Preprocessor:
 
     def replace_all_but(self, df: pd.DataFrame, column: str, exceptions: list,
                         replace_with: str = 'other') -> pd.DataFrame:
-        '''function replaces all answers in one column with "replace_with"
-        for the answers given in exceptions except for nans'''
+        '''function replaces all answers in one column with "other"
+        except for the predefined options documented in the exceptions list'''
         mask = ~df[column].isin(exceptions) & df[column].notna()
         df.loc[mask, column] = replace_with
         return df
@@ -40,7 +40,7 @@ class Utilities:
         pass
 
     def relative_numbers(self, df, column):
-        '''function prints the relative answers for one specific question'''
+        '''function prints percentage of distinct answers for one specific question'''
         vals, counts = np.unique(df[column].astype(str), return_counts=True)
         counts = list(np.round(counts/counts.sum()*100, 0))
         dic = {'values': vals, 'perc': counts}
@@ -92,10 +92,11 @@ class Plotter:
         '''histogram that shows numbers of submissions over birth years'''
         fig, ax = plt.subplots(figsize=(5, 4))
 
-        h = ax.hist(df['birth year'],
-                    bins=int(df['birth year'].max()-df['birth year'].min()),
-                    color=self.c_colors[0], edgecolor='black')
+        bins = np.arange(df['birth year'].min(), df['birth year'].max() + 2) # Explicitly define the bin edges, including one extra year
+        h = ax.hist(df['birth year'], bins=bins, color=self.c_colors[0], 
+                    edgecolor='black')
 
+        print(df['birth year'].max())
         ax.vlines(x=df_generations['from'], ymin=0, ymax=max(h[0])+2,
                   color='black', lw=2)
         for g in df_generations.index:
