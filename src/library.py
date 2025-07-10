@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 
 
+# TODO: Might be more convenient to turn this into a @staticmethod as no state is shared
 class Preprocessor:
     '''class with functions to preprocess the survey responses'''
 
@@ -25,21 +26,21 @@ class Preprocessor:
 
     def replace_all_but(self, df: pd.DataFrame, column: str, exceptions: list,
                         replace_with: str = 'other') -> pd.DataFrame:
-        '''function replaces all answers in one column with "replace_with"
-        for the answers given in exceptions except for nans'''
+        '''function replaces all answers in one column with "other"
+        except for the predefined options documented in the exceptions list'''
         mask = ~df[column].isin(exceptions) & df[column].notna()
         df.loc[mask, column] = replace_with
         return df
 
-
+# TODO: Might be more convenient to turn this into a @staticmethod as no state is shared
 class Utilities:
-    '''class with miscaleneous functions'''
+    '''class with miscellaneous functions'''
 
     def __init__(self):
         pass
 
     def relative_numbers(self, df, column):
-        '''function prints the relative answers for one specific question'''
+        '''function prints percentage of distinct answers for one specific question'''
         vals, counts = np.unique(df[column].astype(str), return_counts=True)
         counts = list(np.round(counts/counts.sum()*100, 0))
         dic = {'values': vals, 'perc': counts}
@@ -91,10 +92,11 @@ class Plotter:
         '''histogram that shows numbers of submissions over birth years'''
         fig, ax = plt.subplots(figsize=(5, 4))
 
-        h = ax.hist(df['birth year'],
-                    bins=int(df['birth year'].max()-df['birth year'].min()),
-                    color=self.c_colors[0], edgecolor='black')
+        bins = np.arange(df['birth year'].min(), df['birth year'].max() + 2) # Explicitly define the bin edges, including one extra year
+        h = ax.hist(df['birth year'], bins=bins, color=self.c_colors[0], 
+                    edgecolor='black')
 
+        print(df['birth year'].max())
         ax.vlines(x=df_generations['from'], ymin=0, ymax=max(h[0])+2,
                   color='black', lw=2)
         for g in df_generations.index:
@@ -160,7 +162,7 @@ class Plotter:
             sorting = np.flip(np.argsort(counts))
         elif x_sort == 'ascending':
             sorting = np.argsort(counts)
-        else:  # custom sorting
+        else:  # custom sorting allows to filter e.g. "other" answers
             arr_index_map = {value: idx for idx, value in enumerate(labels)}
             sorting = np.array([arr_index_map[value] for value in x_sort])
 
@@ -190,9 +192,9 @@ class Plotter:
         # world = gpd.read_file(url)
 
         world = gpd.read_file(
-            r'world-administrative-boundaries\world-administrative-boundaries.shp')
+            r'data\world-administrative-boundaries\world-administrative-boundaries.shp')
 
-        world.to_excel('world.xlsx')
+        world.to_excel(r'.\data\world.xlsx')
 
         labels, counts = np.unique(df['country'], return_counts=True)
 
@@ -391,8 +393,7 @@ class Plotter:
 
     def generation_violin_generic(self, df: pd.DataFrame, question: str,
                                   filename: str) -> None:
-        '''plots violins that show the distribution of answers to numerical
-        questions as violins'''
+        '''plots the distribution of answers to numerical questions as violins'''
 
         df.dropna(subset=question, inplace=True)
 

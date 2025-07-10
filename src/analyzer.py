@@ -24,8 +24,8 @@ from library import Plotter, Preprocessor, Utilities
 # fixed variables and constants
 #############################
 
-FN = r'Generational dialogue in geotechnics(1-822)'
-GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z']
+FN = r'Generational dialogue in geotechnics(1-822)' # File name of the survey results
+GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z'] # "Silent" not used in the survey, but included for completeness
 MOD = 'ALL'  # modifier for filenames  # DACH, ALL
 
 
@@ -42,23 +42,27 @@ folders = [#r'C:\Users\GEr\Dropbox\Apps\Overleaf\GEDIAG_FactualReport\figures',
 
 print(folders)
 
+# load dictionary, utilities and plotter class
 d = dicts()
 pltr = Plotter(GENERATIONS[1:], folders)
 utils = Utilities()
 prep = Preprocessor()
 
-file_path = os.path.abspath(os.path.join(script_dir, '..', '..', f'{FN}.xlsx'))
+# read data from excel file
+file_path = os.path.abspath(os.path.join(script_dir, '..', 'data', f'{FN}.xlsx'))
 df = pd.read_excel(file_path, keep_default_na=False)
 
 # rename columns where necessary
 df.rename(d.questions, axis=1, inplace=True)
 
 # replace answers that are unusable in raw form with values from dictionary
+# required for merge with shape file in function participation_world_map
 df['country'] = df['country'].replace(d.countries)
+# TODO: might be reaosonable to transparently address the mapping of professions and primary work fields
 df['profession'] = df['profession'].replace(d.professions)
 df['primary field of work'] = df['primary field of work'].replace(d.primary_work_field)
 
-# replace answers that are unusable in raw form with single other values
+# replace answers that are unusable in raw form with "other"
 for q_nr in [8, 19, 20, 21, 22, 23, 25, 30]:
     df = prep.replace_all_but(df, column=d.question_numbers[q_nr],
                               exceptions=d.answers[q_nr])
@@ -68,12 +72,14 @@ for q_nr in [14, 24, 27, 32, 34]:
     # make new columns in dataframe for up to 3 answers
     for choice in [1, 2, 3]:
         df[f'{q_nr}_choice_{choice}'] = ''
+    
     # iterate through rows to assign answer possibilities to columns
     for i, row in df.iterrows():
         try:
             row = row[d.question_numbers[q_nr]].split(';')[:-1]
             row = [a if a in d.answers[q_nr] else 'other' for a in row]
-            for j, c in enumerate(row):
+            # Limit to 3 choices (avoid > 3 colums in case other include semi-colon seperated entries)
+            for j, c in enumerate(row[:3]):
                 df.loc[i, f'{q_nr}_choice_{j+1}'] = c
         except AttributeError:
             pass
@@ -88,7 +94,7 @@ for q_nr in [31, 33]:
     ids = ids1 + ids2
     df.loc[ids, d.question_numbers[q_nr+1]] = np.nan
 
-
+# switch to include only DACH countries if requested
 if MOD == 'DACH':
     df = df[(df['country'] == 'Austria') |
             (df['country'] == 'Germany') |
@@ -119,25 +125,27 @@ for g in df_generations.index:
 df_generations['n submissions'] = df.groupby('generation').size()
 df_genders = df.groupby(['generation', 'gender']).size().unstack()
 df_genders.columns = [f'n {g}' for g in df_genders.columns]
+
+count_cols = [col for col in df_genders.columns if col.startswith('n ')] # true gender counts are used as the denominator
 for gender in ['Male', 'Female', 'Non-binary']:
-    try:
-        df_genders[f'% {gender}'] = df_genders[f'n {gender}'] / df_genders.sum(axis=1)
-    except KeyError:
-        pass
+    col = f'n {gender}'
+    if col in df_genders.columns:
+        df_genders[f'% {gender}'] = df_genders[col] / df_genders[count_cols].sum(axis=1)
+
 df_generations = pd.concat((df_generations, df_genders), axis=1)
 df_generations.fillna(0, inplace=True)
 
-# df.to_excel(f'{MOD}_{FN}_modified.xlsx')
-
 #############################
-# print stats
+# print selected stats
 #############################
-
+print()
+print("============== Summary stastistics ==============")
+print()
 print('n participants', len(df))
 print('n participants AT:', len(df[df['country'] == 'Austria']))
 print('n participants DE:', len(df[df['country'] == 'Germany']))
 print('n participants CH:', len(df[df['country'] == 'Switzerland']))
-print('ages:', df['birth year'].min(), df['birth year'].max())
+print('age range:', df['birth year'].min(), df['birth year'].max())
 print('genders:', np.unique(df['gender'], return_counts=True), '\n')
 
 utils.relative_numbers(df, 'profession')
@@ -172,6 +180,10 @@ utils.relative_numbers(df, d.question_numbers[42])
 # plotting
 #############################
 
+print()
+print("============== Plot generation ==============")
+print()
+
 pdf_path = os.path.abspath(os.path.join(script_dir, '..', '..',
                                         f'{MOD}_combined_plots.pdf'))
 
@@ -195,6 +207,7 @@ with PdfPages(pdf_path) as pdf:
     pltr.bar_chart_generic(df, column='profession', x_sort='ascending',
                            filename=f'{MOD}_bar_professions')
     fig = plt.gcf()
+    # TODO: add doc of the .attach_note method
     pdf.attach_note('question number 4')
     pdf.savefig(fig)  # Saves the current figure into the PDF
     plt.close(fig)    # Close the figure to free memory
@@ -299,3 +312,4 @@ with PdfPages(pdf_path) as pdf:
         pdf.attach_note(f'question number {q_nr}')
         pdf.savefig(fig)  # Saves the current figure into the PDF
         plt.close(fig)    # Close the figure to free memory
+

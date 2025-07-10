@@ -11,8 +11,14 @@ Survey Organizers: Alexander Kluckner, Georg Erharter, Andreas-Nizar Granitzer, 
 
 ## Repository structure
 
-- All figures with analyses of questions can be found in the folder `figures`. Figures starting with "ALL_" show results for all submitted answers. Figures starting with "DACH_" show results for answers submitted from Austria :austria:, Germany :de: and Switzerland :switzerland:.
-- The code for the analyses can be found in the folder `src`
+- **figures/**: Contains all figures generated from the survey analyses.
+    - Figures prefixed with `ALL_` display results for all survey responses.
+    - Figures prefixed with `DACH_` display results specifically for responses from Austria :austria:, Germany :de:, and Switzerland :switzerland:.
+- **src/**: Contains all source code used for data analysis and figure generation.
+- **data/**: (Not included in the repository) Place the required data here to run analyses.
+- **environment.yaml**: Lists all dependencies needed to reproduce the analysis environment.
+
+This structure ensures clear separation between code, results, and data, making it easy to navigate and reproduce the study.
 
 
 ## Requirements
@@ -28,7 +34,7 @@ conda activate gediag
 
 ```
 
-Note: You may need to install the [Anaconda or Miniconda](https://www.anaconda.com/download/success) distribution beforehand to use conda commands.
+You may need to install the [Anaconda or Miniconda](https://www.anaconda.com/download/success) distribution beforehand to use conda commands.
 
 
 
