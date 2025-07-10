@@ -24,9 +24,11 @@ from library import Plotter, Preprocessor, Utilities
 # fixed variables and constants
 #############################
 
-FN = r'Generational dialogue in geotechnics(1-822)' # File name of the survey results
-GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z'] # "Silent" not used in the survey, but included for completeness
-MOD = 'ALL'  # modifier for filenames  # DACH, ALL
+# File name of the survey results
+FN = r'Generational dialogue in geotechnics(1-929)'
+# "Silent" not used in the survey, but included for completeness
+GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z']
+MOD = 'DACH'  # modifier for filenames  # DACH, ALL
 
 
 #############################
@@ -138,9 +140,8 @@ df_generations.fillna(0, inplace=True)
 #############################
 # print selected stats
 #############################
-print()
-print("============== Summary stastistics ==============")
-print()
+
+print("\n============== Summary stastistics ==============\n")
 print('n participants', len(df))
 print('n participants AT:', len(df[df['country'] == 'Austria']))
 print('n participants DE:', len(df[df['country'] == 'Germany']))
@@ -180,9 +181,7 @@ utils.relative_numbers(df, d.question_numbers[42])
 # plotting
 #############################
 
-print()
-print("============== Plot generation ==============")
-print()
+print("\n============== Plot generation ==============\n")
 
 pdf_path = os.path.abspath(os.path.join(script_dir, '..', '..',
                                         f'{MOD}_combined_plots.pdf'))
@@ -312,4 +311,3 @@ with PdfPages(pdf_path) as pdf:
         pdf.attach_note(f'question number {q_nr}')
         pdf.savefig(fig)  # Saves the current figure into the PDF
         plt.close(fig)    # Close the figure to free memory
-
