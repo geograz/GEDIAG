@@ -25,9 +25,9 @@ from library import Plotter, Preprocessor, Utilities
 #############################
 
 # File name of the survey results
-FN = r'Generational dialogue in geotechnics(1-929)'
+FN = r'Generational dialogue in geotechnics(1-934)'
 # "Silent" not used in the survey, but included for completeness
-GENERATIONS = ['Silent', 'Baby Boomers', 'X', 'Y', 'Z']
+GENERATIONS = ['Silent', 'BB', 'GenX', 'GenY', 'GenZ']
 MOD = 'DACH'  # modifier for filenames  # DACH, ALL
 
 
@@ -74,7 +74,7 @@ for q_nr in [14, 24, 27, 32, 34]:
     # make new columns in dataframe for up to 3 answers
     for choice in [1, 2, 3]:
         df[f'{q_nr}_choice_{choice}'] = ''
-    
+
     # iterate through rows to assign answer possibilities to columns
     for i, row in df.iterrows():
         try:
@@ -128,7 +128,8 @@ df_generations['n submissions'] = df.groupby('generation').size()
 df_genders = df.groupby(['generation', 'gender']).size().unstack()
 df_genders.columns = [f'n {g}' for g in df_genders.columns]
 
-count_cols = [col for col in df_genders.columns if col.startswith('n ')] # true gender counts are used as the denominator
+# true gender counts are used as the denominator
+count_cols = [col for col in df_genders.columns if col.startswith('n ')]
 for gender in ['Male', 'Female', 'Non-binary']:
     col = f'n {gender}'
     if col in df_genders.columns:
@@ -155,22 +156,22 @@ utils.relative_numbers(df, 'relevant work experience [y]')
 utils.relative_numbers(df, 'organization size')
 utils.relative_numbers(df, 'position')
 utils.relative_numbers(df, 'Do you have responsibility for personnel?')
-utils.relative_numbers(df[(df['generation'] == 'Baby Boomers') |
-                          (df['generation'] == 'X')],
+utils.relative_numbers(df[(df['generation'] == 'BB') |
+                          (df['generation'] == 'GenX')],
                        'Do you have responsibility for personnel?')
-utils.relative_numbers(df[(df['generation'] == 'Y') |
-                          (df['generation'] == 'Z')],
+utils.relative_numbers(df[(df['generation'] == 'GenY') |
+                          (df['generation'] == 'GenZ')],
                        'Do you have responsibility for personnel?')
 
 utils.relative_numbers(df, d.question_numbers[16])
 utils.relative_numbers(df, d.question_numbers[17])
 utils.relative_numbers(df, d.question_numbers[20])
 utils.relative_numbers(df, d.question_numbers[22])
-utils.relative_numbers(df[(df['generation'] == 'Baby Boomers') |
-                          (df['generation'] == 'X')],
+utils.relative_numbers(df[(df['generation'] == 'BB') |
+                          (df['generation'] == 'GenX')],
                        d.question_numbers[23])
-utils.relative_numbers(df[(df['generation'] == 'Y') |
-                          (df['generation'] == 'Z')],
+utils.relative_numbers(df[(df['generation'] == 'GenY') |
+                          (df['generation'] == 'GenZ')],
                        d.question_numbers[23])
 utils.relative_numbers(df, d.question_numbers[25])
 utils.relative_numbers(df, d.question_numbers[30])
@@ -301,9 +302,6 @@ with PdfPages(pdf_path) as pdf:
     # multiple choice questions
     print('multiple choice barcharts')
     for q_nr in [14, 24, 27, 32, 34]:
-        # pltr.generation_perc_bar_multichoice(df, d.question_numbers[q_nr],
-        #                                      q_nr, d.answers[q_nr],
-        #                                      filename=f'{MOD}_{q_nr}_perc_bar_multi')
         pltr.generation_multichoice_hbars(df, d.question_numbers[q_nr],
                                           q_nr, d.answers[q_nr],
                                           filename=f'{MOD}_{q_nr}_perc_hbars_multi')

@@ -55,10 +55,9 @@ class Plotter:
         self.GENERATIONS = GENERATIONS
         self.FOLDERS = FOLDERS
         self.grey_colors = ['0.8', '0.6', '0.4', '0.2', '0.0'] * 4
-        self.c_colors = ['indianred', 'slategrey', 'gainsboro',
-                         'firebrick', 'steelblue', 'dimgrey',
-                         'lightcoral', 'lightskyblue', 'grey',
-                         'rosybrown', 'lightsteelblue', 'silver',
+        self.c_colors = ["#1B61A7", "#75CFED", "#228833", "#CCBB44",
+                         "#EE6677", "#AA3377", "#BBBBBB", "#000000",
+                         "#FFD700", "#AA4499", "#117733", "#332288"
                          ] * 4
 
     def wrap_text(self, text: str, max_length: int = 60) -> str:
@@ -92,24 +91,21 @@ class Plotter:
         '''histogram that shows numbers of submissions over birth years'''
         fig, ax = plt.subplots(figsize=(5, 4))
 
-        bins = np.arange(df['birth year'].min(), df['birth year'].max() + 2) # Explicitly define the bin edges, including one extra year
+        # Explicitly define the bin edges, including one extra year
+        bins = np.arange(df['birth year'].min(), df['birth year'].max() + 2)
         h = ax.hist(df['birth year'], bins=bins, color=self.c_colors[0], 
                     edgecolor='black')
 
-        print(df['birth year'].max())
         ax.vlines(x=df_generations['from'], ymin=0, ymax=max(h[0])+2,
                   color='black', lw=2)
         for g in df_generations.index:
-            if g == 'Baby Boomers':
-                text = 'Baby\nBoomers'
-            else:
-                text = g
-            ax.text(x=df_generations.loc[g]['from']+1, y=max(h[0])+1.5, s=text,
+            ax.text(x=df_generations.loc[g]['from']+1, y=max(h[0])+1.5, s=g,
                     va='top')
 
         ax.set_ylim(top=max(h[0])+2)
 
         ax.grid(alpha=0.5, axis='y')
+        ax.set_title(f'n total participants: {len(df)}')
         ax.set_xlabel('birth year')
         ax.set_ylabel("number of participants")
 
@@ -295,6 +291,7 @@ class Plotter:
                                      answers: list, filename: str):
         '''multiple choice hbars per possible answer'''
 
+        # exclude generations with too few responses
         df = df[df['generation'].isin(self.GENERATIONS)]
 
         # Step 1: Stack the choice columns to get a long-format dataframe
@@ -323,8 +320,9 @@ class Plotter:
         reversed_y_positions = y_positions[::-1]
         for i, gen in enumerate(generations_order):
             offset = (i - len(generations_order)/2) * bar_height + bar_height/2
+            label = f'{gen}: n={generation_counts.loc[gen]}'
             ax.barh(reversed_y_positions + offset, percentages[gen],
-                    height=bar_height, label=gen, color=self.c_colors[i])
+                    height=bar_height, label=label, color=self.c_colors[i])
 
         # Format plot
         ax.set_yticks(y_positions)
@@ -467,7 +465,7 @@ class Plotter:
                 ax.barh(summary_df.index, widths, left=starts, height=0.8,
                         color=self.c_colors[j])
 
-            ax.set_title(g)
+            ax.set_title(f'{g}\nn={len(df_temp)}')
             ax.invert_yaxis()
 
             ax.set_xlim(left=0, right=100)
