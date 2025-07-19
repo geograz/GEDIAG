@@ -42,8 +42,6 @@ folders = [#r'C:\Users\GEr\Dropbox\Apps\Overleaf\GEDIAG_FactualReport\figures',
            os.path.abspath(os.path.join(script_dir, '..', 'figures'))
            ]
 
-print(folders)
-
 # load dictionary, utilities and plotter class
 d = dicts()
 pltr = Plotter(GENERATIONS[1:], folders)
@@ -122,6 +120,8 @@ for g in df_generations.index:
     id_ = df[(df['birth year'].values >= df_generations['from'].loc[g]) &
              (df['birth year'].values <= df_generations['to'].loc[g])].index
     df.loc[id_, 'generation'] = g
+
+# df.to_excel('processed_answers.xlsx')
 
 # get total submission numbers for genders
 df_generations['n submissions'] = df.groupby('generation').size()
@@ -266,6 +266,18 @@ with PdfPages(pdf_path) as pdf:
 
     # ---- Technical question analysis ---
 
+    # make stacked barcharts for single choice questions
+    print('single choice barcharts')
+    for q_nr in [9, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 30, 35, 36, 37,
+                 39, 40, 42, 43, 44, 46]:
+        pltr.generation_perc_bar_generic(df, d.question_numbers[q_nr],
+                                         d.answers[q_nr],
+                                         filename=f'{MOD}_{q_nr}_perc_bar')
+        fig = plt.gcf()
+        pdf.attach_note(f'question number {q_nr}')
+        pdf.savefig(fig)  # Saves the current figure into the PDF
+        plt.close(fig)    # Close the figure to free memory
+
     # rating questions
     print('rating questions')
     for q_nr in [11, 29, 38]:
@@ -282,18 +294,6 @@ with PdfPages(pdf_path) as pdf:
     for q_nr in [12, 26, 28, 41, 45]:
         pltr.generation_violin_generic(df, d.question_numbers[q_nr],
                                        f'{MOD}_{q_nr}_violin')
-        fig = plt.gcf()
-        pdf.attach_note(f'question number {q_nr}')
-        pdf.savefig(fig)  # Saves the current figure into the PDF
-        plt.close(fig)    # Close the figure to free memory
-
-    # make stacked barcharts for single choice questions
-    print('single choice barcharts')
-    for q_nr in [9, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 30, 35, 36, 37,
-                 39, 40, 42, 43, 44, 46]:
-        pltr.generation_perc_bar_generic(df, d.question_numbers[q_nr],
-                                         d.answers[q_nr],
-                                         filename=f'{MOD}_{q_nr}_perc_bar')
         fig = plt.gcf()
         pdf.attach_note(f'question number {q_nr}')
         pdf.savefig(fig)  # Saves the current figure into the PDF

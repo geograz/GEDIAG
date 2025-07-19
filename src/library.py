@@ -230,11 +230,11 @@ class Plotter:
                                     answers: list, filename: str) -> None:
         '''stacked barchart for single choice questions'''
 
-        df.dropna(subset=question, inplace=True)
+        df_new = df.dropna(subset=question).copy()
 
         # prepare percentage wise generation group for question
         df_generation = pd.DataFrame(index=self.GENERATIONS)
-        df_grouped = df.groupby(['generation', question]).size().unstack()
+        df_grouped = df_new.groupby(['generation', question]).size().unstack()
         df_generation = pd.merge(left=df_generation, right=df_grouped,
                                  how='outer',
                                  left_index=True, right_index=True)
@@ -292,19 +292,20 @@ class Plotter:
         '''multiple choice hbars per possible answer'''
 
         # exclude generations with too few responses
-        df = df[df['generation'].isin(self.GENERATIONS)]
+        df_new = df[df['generation'].isin(self.GENERATIONS)].copy()
 
         # Step 1: Stack the choice columns to get a long-format dataframe
         choice_columns = [f'{question_nr}_choice_{i}' for i in [1, 2, 3]]
-        df_long = df.melt(id_vars=['generation'], value_vars=choice_columns,
-                          value_name='choice')
+        df_long = df_new.melt(id_vars=['generation'],
+                              value_vars=choice_columns,
+                              value_name='choice')
         df_long = df_long.dropna(subset=['choice'])
 
         # Step 2: Count how many participants from each generation chose each option
         counts = df_long.groupby(['choice', 'generation']).size().unstack(fill_value=0)
 
         # Step 3: Normalize by total participants per generation to get %
-        generation_counts = df['generation'].value_counts()
+        generation_counts = df_new['generation'].value_counts()
         percentages = counts.divide(generation_counts, axis=1) * 100
 
         # Step 4: Reindex to ensure all choices are included
@@ -347,7 +348,7 @@ class Plotter:
         choice_cols = [f'{question_nr}_choice_{i}' for i in [1, 2, 3]]
 
         for g in self.GENERATIONS:
-            df_g = df[df['generation'] == g]
+            df_g = df[df['generation'] == g].copy()
 
             # Combine and flatten all selected columns
             combined = pd.concat([df_g[col] for col in choice_cols])
@@ -393,14 +394,14 @@ class Plotter:
                                   filename: str) -> None:
         '''plots the distribution of answers to numerical questions as violins'''
 
-        df.dropna(subset=question, inplace=True)
+        df_new = df.dropna(subset=question).copy()
 
-        df[question] = pd.to_numeric(df[question], errors='coerce')
+        df_new[question] = pd.to_numeric(df_new[question], errors='coerce')
 
         values = []
         for g in self.GENERATIONS:
             try:
-                values.append(df[df['generation'] == g][question].dropna().values)
+                values.append(df_new[df_new['generation'] == g][question].dropna().values)
             except KeyError:
                 values.append([])
 
@@ -450,7 +451,7 @@ class Plotter:
         fig = plt.figure(figsize=(10, len(columns)/1.5))
 
         for i, g in enumerate(self.GENERATIONS):
-            df_temp = df.dropna(subset=columns)
+            df_temp = df.dropna(subset=columns).copy()
             df_temp = df_temp[df_temp['generation'] == g]
             df_temp = df_temp[columns].astype(int, copy=True)
             summary_df = df_temp.apply(lambda x: x.value_counts(normalize=True)).T
