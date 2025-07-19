@@ -99,8 +99,9 @@ class Plotter:
         ax.vlines(x=df_generations['from'], ymin=0, ymax=max(h[0])+2,
                   color='black', lw=2)
         for g in df_generations.index:
-            ax.text(x=df_generations.loc[g]['from']+1, y=max(h[0])+1.5, s=g,
-                    va='top')
+            text_ = f'{g}\nn={int(df_generations.loc[g]['n submissions'])}'
+            ax.text(x=df_generations.loc[g]['from']+1, y=max(h[0])+1.5,
+                    s=text_, va='top')
 
         ax.set_ylim(top=max(h[0])+2)
 
@@ -141,7 +142,7 @@ class Plotter:
         ax.set_ylabel("number of participants")
         ax.set_xticks(x)
         ax.set_xticklabels(df_generations.index, rotation=0)
-        ax.legend()
+        ax.legend(reverse=True)
 
         self.plot_end(filename)
 
@@ -218,11 +219,12 @@ class Plotter:
         world = world.to_crs('ESRI:54042')  # Winkel Trippel Projection
 
         # Plot map
-        fig, ax = plt.subplots(1, 1, figsize=(12, 8))
-        world.plot(column='categories', cmap='cividis_r', legend=True, ax=ax,
+        fig, ax = plt.subplots(1, 1, figsize=(14, 8))
+        world.plot(column='categories', cmap='inferno_r', legend=True, ax=ax,  # cividis_r
                    categorical=True, edgecolor='dimgrey', linewidth=.4,
                    missing_kwds={'color': 'white', 'label': 'No Data'})
-        plt.title("global numbers of submission")
+        #plt.title("global numbers of submission")
+        ax.axis('off')
 
         self.plot_end(filename)
 
@@ -272,8 +274,8 @@ class Plotter:
         ax.set_xlim(left=x.min()-0.4, right=x.max()+0.4)
 
         ax.set_title(self.wrap_text(question, max_length=50))
-        ax.set_xlabel("generation")
-        ax.set_ylabel("percent %")
+        ax.set_xlabel('generation')
+        ax.set_ylabel('share %')
         ax.grid(alpha=0.5, axis='y')
         ax.set_xticks(x)
 
@@ -291,8 +293,10 @@ class Plotter:
                                      answers: list, filename: str):
         '''multiple choice hbars per possible answer'''
 
+        df_new = df.dropna(subset=question).copy()
+
         # exclude generations with too few responses
-        df_new = df[df['generation'].isin(self.GENERATIONS)].copy()
+        df_new = df_new[df_new['generation'].isin(self.GENERATIONS)]
 
         # Step 1: Stack the choice columns to get a long-format dataframe
         choice_columns = [f'{question_nr}_choice_{i}' for i in [1, 2, 3]]
@@ -329,7 +333,7 @@ class Plotter:
         ax.set_yticks(y_positions)
         answers = [self.wrap_text(a, 30) for a in answers]
         ax.set_yticklabels(answers[::-1])
-        ax.set_xlabel('percent %')
+        ax.set_xlabel('share %')
         ax.set_ylabel('choices')
         ax.set_title(self.wrap_text(question, max_length=60))
         ax.legend(title='generation', bbox_to_anchor=(1.01, 1),
@@ -347,8 +351,10 @@ class Plotter:
 
         choice_cols = [f'{question_nr}_choice_{i}' for i in [1, 2, 3]]
 
+        df_new = df.dropna(subset=question).copy()
+
         for g in self.GENERATIONS:
-            df_g = df[df['generation'] == g].copy()
+            df_g = df_new[df_new['generation'] == g]
 
             # Combine and flatten all selected columns
             combined = pd.concat([df_g[col] for col in choice_cols])
@@ -471,7 +477,7 @@ class Plotter:
 
             ax.set_xlim(left=0, right=100)
             ax.set_xticks([0, 33, 66, 100])
-            ax.set_xlabel('percent %')
+            ax.set_xlabel('share %')
 
             if i == 0:
                 ax.set_yticks(range(len(summary_df)))

@@ -224,7 +224,7 @@ with PdfPages(pdf_path) as pdf:
     # work experience bar chart plot
     pltr.bar_chart_generic(df, column='relevant work experience [y]',
                            filename=f'{MOD}_bar_work_experience',
-                           x_sort=['< 5', '5-10', '11-20', '21-30', '> 30'])
+                           x_sort=['None', '< 5', '5-10', '11-20', '21-30', '> 30'])
     fig = plt.gcf()
     pdf.attach_note('question number 6')
     pdf.savefig(fig)  # Saves the current figure into the PDF
@@ -248,12 +248,13 @@ with PdfPages(pdf_path) as pdf:
     pdf.savefig(fig)  # Saves the current figure into the PDF
     plt.close(fig)    # Close the figure to free memory
 
-    # participation world map
-    pltr.participation_world_map(df, f'{MOD}_map_n_submissions')
-    fig = plt.gcf()
-    pdf.attach_note('question number 10')
-    pdf.savefig(fig)  # Saves the current figure into the PDF
-    plt.close(fig)    # Close the figure to free memory
+    if MOD == 'ALL':
+        # participation world map
+        pltr.participation_world_map(df, f'{MOD}_map_n_submissions')
+        fig = plt.gcf()
+        pdf.attach_note('question number 10')
+        pdf.savefig(fig)  # Saves the current figure into the PDF
+        plt.close(fig)    # Close the figure to free memory
 
     # participation bar chart
     pltr.bar_chart_generic(df, column='country', x_sort='ascending',
