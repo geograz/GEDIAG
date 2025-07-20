@@ -28,7 +28,7 @@ from library import Plotter, Preprocessor, Utilities
 FN = r'Generational dialogue in geotechnics(1-934)'
 # "Silent" not used in the survey, but included for completeness
 GENERATIONS = ['Silent', 'BB', 'GenX', 'GenY', 'GenZ']
-MOD = 'DACH'  # modifier for filenames  # DACH, ALL
+MOD = 'ALL'  # modifier for filenames  # DACH, ALL
 
 
 #############################
@@ -87,12 +87,17 @@ for q_nr in [14, 24, 27, 32, 34]:
 # replace '' with nan in questions
 df = df.replace('', np.nan).infer_objects(copy=False)
 
-# make sure that questions 31, 32, 33 and 34 logic is correct
-for q_nr in [31, 33]:
-    ids1 = list(df[df[d.question_numbers[q_nr]] == 'No (-> please skip next question)'].index)
-    ids2 = list(df.loc[pd.isna(df[d.question_numbers[q_nr]]), :].index)
-    ids = ids1 + ids2
-    df.loc[ids, d.question_numbers[q_nr+1]] = np.nan
+# make sure that questions 31, 32 logic is correct
+ids1 = list(df[df[d.question_numbers[31]] == 'No (-> please skip next question)'].index)
+ids2 = list(df.loc[pd.isna(df[d.question_numbers[31]]), :].index)
+ids = ids1 + ids2
+df.loc[ids, d.question_numbers[31+1]] = np.nan
+
+# make sure that questions 33 and 34 logic is correct
+ids1 = list(df[df[d.question_numbers[33]] == 'No  (-> please skip next question)'].index)
+ids2 = list(df.loc[pd.isna(df[d.question_numbers[33]]), :].index)
+ids = ids1 + ids2
+df.loc[ids, d.question_numbers[33+1]] = np.nan
 
 # switch to include only DACH countries if requested
 if MOD == 'DACH':
