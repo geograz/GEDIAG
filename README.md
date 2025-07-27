@@ -1,12 +1,12 @@
 # GEDIAG
 
-Repository for the code and analyses of the study on "Generational Dialogue in Geotechnics"
-
-## Code description
-
-An international online survey was conducted from March to July 2025 to explore generational differences in experiences, beliefs, needs, and goals of members of the geo-community. The survey targeted professionals independent of age and experience who study or work in geotechnics or other geo-related disciplines. The results aim to serve as a foundation for increasing the profession’s attractiveness, offer valuable insights into intergenerational biases, and lay the groundwork for improved collaboration in the workplace.
+Repository for the code and analyses of the study on "**Generational Dialogue in Geotechnics**" (GEDIAG) that was conducted for a contribution to the Geomechanics Colloquium 2025 (Salzburg / Austria). An international online survey was conducted from March to July 2025 to explore generational differences in experiences, beliefs, needs, and goals of members of the applied geo-community. The survey targeted professionals independent of age and experience who study or work in geotechnics or other geo-related disciplines. The results serve as a foundation for increasing the profession’s attractiveness, offer valuable insights into intergenerational biases, and lay the groundwork for improved collaboration in the workplace.
 
 Survey Organizers: Alexander Kluckner, Georg Erharter, Andreas-Nizar Granitzer, Bettina Mair, Suzanne Lacasse
+
+The following publications present and discuss results of the survey:
+
+- Kluckner, A., Erharter, G.H., Granitzer, A.-N., Mair, B., Lacasse, S., 2025. Generational gaps in geotechnics? A Transalpine perspective. Geomechanics and Tunnelling 18 (5).
 
 
 ## Repository structure
@@ -17,8 +17,6 @@ Survey Organizers: Alexander Kluckner, Georg Erharter, Andreas-Nizar Granitzer, 
 - **src/**: Contains all source code used for data analysis and figure generation.
 - **data/**: (Not included in the repository) Place the required data here to run analyses.
 - **environment.yaml**: Lists all dependencies needed to reproduce the analysis environment.
-
-This structure ensures clear separation between code, results, and data, making it easy to navigate and reproduce the study.
 
 
 ## Requirements
@@ -36,5 +34,8 @@ conda activate gediag
 
 You may need to install the [Anaconda or Miniconda](https://www.anaconda.com/download/success) distribution beforehand to use conda commands.
 
+## License information
 
+The software is provided under the "MIT License" (see the License file in this repository)
 
+Figures that are provided with survey analyses are licensed under the Creative Commons CC-BY 4.0 license (https://creativecommons.org/licenses/by/4.0/)
